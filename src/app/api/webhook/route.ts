@@ -150,8 +150,54 @@ async function handleFollowEvent(event: WebhookEvent) {
   }
   
   const welcomeMessage = {
-    type: 'text',
-    text: 'フォローありがとうございます！\n「アプリ」と送信するとLIFFアプリを開けます。'
+    type: 'flex',
+    altText: 'カウンセリングを開始しましょう！',
+    contents: {
+      type: 'bubble',
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        contents: [
+          {
+            type: 'text',
+            text: 'こんにちは！',
+            weight: 'bold',
+            size: 'xl',
+            color: '#1DB446'
+          },
+          {
+            type: 'text',
+            text: 'Kota-kun健康管理アプリへようこそ！',
+            wrap: true,
+            margin: 'md'
+          },
+          {
+            type: 'text',
+            text: 'まずは簡単なカウンセリングを行って、あなたに最適な健康プランを作成しましょう。',
+            wrap: true,
+            margin: 'md',
+            size: 'sm',
+            color: '#666666'
+          }
+        ]
+      },
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        contents: [
+          {
+            type: 'button',
+            style: 'primary',
+            color: '#1DB446',
+            action: {
+              type: 'postback',
+              label: 'カウンセリングを開始',
+              data: 'action=start_counseling'
+            }
+          }
+        ]
+      }
+    }
   };
 
   await sendReplyMessage(replyToken, welcomeMessage);
@@ -168,12 +214,60 @@ async function handlePostbackEvent(event: WebhookEvent) {
   console.log('Postback data:', postback.data);
   
   // ポストバックデータに応じた処理
-  const response = {
-    type: 'text',
-    text: `ポストバックを受信しました: ${postback.data}`
-  };
-
-  await sendReplyMessage(replyToken, response);
+  if (postback.data === 'action=start_counseling') {
+    const liffUrl = process.env.NEXT_PUBLIC_LIFF_URL || 'https://kota-kun-liff-app.vercel.app';
+    
+    const response = {
+      type: 'flex',
+      altText: 'カウンセリングページを開く',
+      contents: {
+        type: 'bubble',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: 'カウンセリングを開始します',
+              weight: 'bold',
+              size: 'xl',
+              color: '#1DB446'
+            },
+            {
+              type: 'text',
+              text: '以下のボタンを押してカウンセリングページを開いてください。',
+              wrap: true,
+              margin: 'md'
+            }
+          ]
+        },
+        footer: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'button',
+              style: 'primary',
+              color: '#1DB446',
+              action: {
+                type: 'uri',
+                label: 'カウンセリングページを開く',
+                uri: `${liffUrl}?mode=counseling`
+              }
+            }
+          ]
+        }
+      }
+    };
+    
+    await sendReplyMessage(replyToken, response);
+  } else {
+    const response = {
+      type: 'text',
+      text: `ポストバックを受信しました: ${postback.data}`
+    };
+    await sendReplyMessage(replyToken, response);
+  }
 }
 
 async function sendReplyMessage(replyToken: string, message: Record<string, unknown>) {

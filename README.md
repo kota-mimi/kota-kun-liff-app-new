@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kota-kun LIFF App
 
-## Getting Started
+LINE LIFFアプリケーションです。
 
-First, run the development server:
+## セットアップ
+
+### 1. 依存関係のインストール
+
+```bash
+npm install
+```
+
+### 2. 環境変数の設定
+
+`.env.local` ファイルを作成し、以下の内容を設定してください：
+
+```env
+# LIFF設定
+NEXT_PUBLIC_LIFF_ID=YOUR_LIFF_ID_HERE
+
+# LINE Bot設定（必要に応じて）
+LINE_CHANNEL_ACCESS_TOKEN=your_channel_access_token
+LINE_CHANNEL_SECRET=your_channel_secret
+
+# その他の設定
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+```
+
+### 3. LIFF IDの取得
+
+1. [LINE Developers Console](https://developers.line.biz/console/)にアクセス
+2. プロバイダーを作成
+3. チャンネルを作成（LIFFアプリ）
+4. LIFF IDを取得して環境変数に設定
+
+### 4. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いてください。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 機能
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- LINE LIFF認証
+- ユーザープロフィール取得
+- ログイン/ログアウト機能
 
-## Learn More
+## 技術スタック
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- LINE LIFF SDK
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## デプロイ
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Vercel
 
-## Deploy on Vercel
+1. Vercelにプロジェクトをインポート
+2. 環境変数を設定
+3. デプロイ
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Firebase Hosting
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm run export
+firebase deploy
+```

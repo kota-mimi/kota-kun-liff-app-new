@@ -10,10 +10,6 @@ interface UserData {
   weight: number;
   targetWeight: number;
   goal: string;
-  dailyCalories?: number;
-  protein?: number;
-  fat?: number;
-  carbs?: number;
 }
 
 export default function Home() {
@@ -26,7 +22,7 @@ export default function Home() {
 
   useEffect(() => {
     // LIFFの初期化
-    liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID || 'YOUR_LIFF_ID' })
+    liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID || '2007945061-DEEaglg8' })
       .then(() => {
         setMessage('LIFFの初期化が完了しました');
         
@@ -47,9 +43,6 @@ export default function Home() {
             if (mode === 'counseling') {
               // カウンセリングページにリダイレクト
               window.location.href = '/counseling';
-            } else if (mode === 'mypage') {
-              // マイページモードでユーザーデータを読み込み
-              loadUserData(profile.userId);
             } else {
               // 通常のユーザーデータ読み込み
               loadUserData(profile.userId);
@@ -68,38 +61,10 @@ export default function Home() {
       });
   }, []);
 
-  const loadUserData = async (userId: string) => {
-    try {
-      // Firebaseからユーザーデータを取得
-      const response = await fetch(`/api/submit-counseling?userId=${userId}`);
-      if (response.ok) {
-        const result = await response.json();
-        if (result.isRegistered && result.counselingData) {
-          // カウンセリング完了済みの場合
-          const counselingData = result.counselingData;
-          const nutritionData = result.nutritionData;
-          
-          setUserData({
-            name: counselingData.name,
-            age: parseInt(counselingData.age),
-            height: parseInt(counselingData.height),
-            weight: parseFloat(counselingData.weight),
-            targetWeight: parseFloat(counselingData.targetWeight),
-            goal: counselingData.goalType,
-            dailyCalories: nutritionData.dailyCalories,
-            protein: nutritionData.protein,
-            fat: nutritionData.fat,
-            carbs: nutritionData.carbs
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-      // フォールバック: ローカルストレージから読み込み
-      const savedData = localStorage.getItem(`userData_${userId}`);
-      if (savedData) {
-        setUserData(JSON.parse(savedData));
-      }
+  const loadUserData = (userId: string) => {
+    const savedData = localStorage.getItem(`userData_${userId}`);
+    if (savedData) {
+      setUserData(JSON.parse(savedData));
     }
   };
 

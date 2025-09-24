@@ -93,7 +93,7 @@ async function handleTextMessage(event: WebhookEvent) {
   }
   
   // LIFFアプリのURLを送信
-  const liffUrl = process.env.NEXT_PUBLIC_LIFF_URL || 'https://your-app.vercel.app';
+  const liffUrl = process.env.NEXT_PUBLIC_LIFF_URL || 'https://kota-kun-liff-app.vercel.app';
   
   const response = {
     type: 'flex',
@@ -252,7 +252,7 @@ async function handlePostbackEvent(event: WebhookEvent) {
               action: {
                 type: 'uri',
                 label: 'カウンセリングページを開く',
-                uri: `${liffUrl}?mode=counseling`
+                uri: `${liffUrl}/counseling`
               }
             }
           ]

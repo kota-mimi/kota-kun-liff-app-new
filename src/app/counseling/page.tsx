@@ -3,60 +3,17 @@
 import { useEffect, useState } from 'react';
 import liff from '@line/liff';
 
-interface CounselingData {
-  // Step 1: 基本情報
-  name: string;
-  age: string;
-  gender: string;
-  
-  // Step 2: 身体情報
-  height: string;
-  weight: string;
-  targetWeight: string;
-  targetDate: string;
-  
-  // Step 3: 生活習慣
-  sleepHours: string;
-  activityLevel: string;
-  
-  // Step 4: 運動習慣
-  hasExerciseHabit: string;
-  exerciseFrequency: string;
-  
-  // Step 5: 食生活
-  mealCount: string;
-  snackFrequency: string;
-  drinkFrequency: string;
-  
-  // Step 6: 目標・悩み
-  concernedAreas: string;
-  goalType: string;
-  otherConcernedAreas: string;
-  otherGoalType: string;
-}
-
 export default function CounselingPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [userId, setUserId] = useState('');
-  const [formData, setFormData] = useState<CounselingData>({
+  const [formData, setFormData] = useState({
     name: '',
     age: '',
     gender: '',
     height: '',
     weight: '',
     targetWeight: '',
-    targetDate: '',
-    sleepHours: '',
-    activityLevel: '',
-    hasExerciseHabit: '',
-    exerciseFrequency: '',
-    mealCount: '',
-    snackFrequency: '',
-    drinkFrequency: '',
-    concernedAreas: '',
-    goalType: '',
-    otherConcernedAreas: '',
-    otherGoalType: ''
+    goal: ''
   });
 
   useEffect(() => {
@@ -75,12 +32,12 @@ export default function CounselingPage() {
       });
   }, []);
 
-  const handleInputChange = (field: keyof CounselingData, value: string) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const nextStep = () => {
-    if (currentStep < 6) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -91,32 +48,10 @@ export default function CounselingPage() {
     }
   };
 
-  const submitCounseling = async () => {
-    try {
-      const response = await fetch('/api/submit-counseling', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-          counselingData: formData
-        }),
-      });
-
-      if (response.ok) {
-        // カウンセリング完了後の処理
-        const result = await response.json();
-        console.log('Counseling submitted:', result);
-        
-        // カウンセリング完了ページにリダイレクト
-        window.location.href = '/counseling-complete';
-      } else {
-        console.error('Failed to submit counseling');
-      }
-    } catch (error) {
-      console.error('Error submitting counseling:', error);
-    }
+  const submitCounseling = () => {
+    // ダミーの完了処理
+    alert('カウンセリングが完了しました！\n（これはダミーです）');
+    window.location.href = '/';
   };
 
   const renderStep1 = () => (
@@ -188,196 +123,48 @@ export default function CounselingPage() {
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">目標体重(kg)</label>
-          <input
-            type="number"
-            value={formData.targetWeight}
-            onChange={(e) => handleInputChange('targetWeight', e.target.value)}
-            className="w-full p-3 border rounded-lg"
-            placeholder="60.0"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">目標達成日</label>
-          <input
-            type="date"
-            value={formData.targetDate}
-            onChange={(e) => handleInputChange('targetDate', e.target.value)}
-            className="w-full p-3 border rounded-lg"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">目標体重(kg)</label>
+        <input
+          type="number"
+          value={formData.targetWeight}
+          onChange={(e) => handleInputChange('targetWeight', e.target.value)}
+          className="w-full p-3 border rounded-lg"
+          placeholder="60.0"
+        />
       </div>
     </div>
   );
 
   const renderStep3 = () => (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold text-center">生活習慣</h2>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">睡眠時間</label>
-        <select
-          value={formData.sleepHours}
-          onChange={(e) => handleInputChange('sleepHours', e.target.value)}
-          className="w-full p-3 border rounded-lg"
-        >
-          <option value="">選択してください</option>
-          <option value="4時間未満">4時間未満</option>
-          <option value="4-5時間">4-5時間</option>
-          <option value="5-6時間">5-6時間</option>
-          <option value="6-7時間">6-7時間</option>
-          <option value="7-8時間">7-8時間</option>
-          <option value="8時間以上">8時間以上</option>
-        </select>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">活動レベル</label>
-        <select
-          value={formData.activityLevel}
-          onChange={(e) => handleInputChange('activityLevel', e.target.value)}
-          className="w-full p-3 border rounded-lg"
-        >
-          <option value="">選択してください</option>
-          <option value="座りがち">座りがち（デスクワーク中心）</option>
-          <option value="軽い活動">軽い活動（週1-3回の軽い運動）</option>
-          <option value="中程度の活動">中程度の活動（週3-5回の中程度の運動）</option>
-          <option value="活発">活発（週6-7回の激しい運動）</option>
-          <option value="非常に活発">非常に活発（1日2回以上の激しい運動）</option>
-        </select>
-      </div>
-    </div>
-  );
-
-  const renderStep4 = () => (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold text-center">運動習慣</h2>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">現在運動をしていますか？</label>
-        <div className="space-y-2">
-          {['はい', 'いいえ'].map((option) => (
-            <button
-              key={option}
-              onClick={() => handleInputChange('hasExerciseHabit', option)}
-              className={`w-full p-3 border rounded-lg text-left ${
-                formData.hasExerciseHabit === option ? 'bg-blue-500 text-white' : 'bg-white'
-              }`}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      </div>
-      
-      {formData.hasExerciseHabit === 'はい' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">運動頻度</label>
-          <select
-            value={formData.exerciseFrequency}
-            onChange={(e) => handleInputChange('exerciseFrequency', e.target.value)}
-            className="w-full p-3 border rounded-lg"
-          >
-            <option value="">選択してください</option>
-            <option value="週1回">週1回</option>
-            <option value="週2-3回">週2-3回</option>
-            <option value="週4-5回">週4-5回</option>
-            <option value="週6-7回">週6-7回</option>
-            <option value="毎日">毎日</option>
-          </select>
-        </div>
-      )}
-    </div>
-  );
-
-  const renderStep5 = () => (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold text-center">食生活</h2>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">1日の食事回数</label>
-        <select
-          value={formData.mealCount}
-          onChange={(e) => handleInputChange('mealCount', e.target.value)}
-          className="w-full p-3 border rounded-lg"
-        >
-          <option value="">選択してください</option>
-          <option value="1回">1回</option>
-          <option value="2回">2回</option>
-          <option value="3回">3回</option>
-          <option value="4回以上">4回以上</option>
-        </select>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">間食の頻度</label>
-        <select
-          value={formData.snackFrequency}
-          onChange={(e) => handleInputChange('snackFrequency', e.target.value)}
-          className="w-full p-3 border rounded-lg"
-        >
-          <option value="">選択してください</option>
-          <option value="しない">しない</option>
-          <option value="週1-2回">週1-2回</option>
-          <option value="週3-4回">週3-4回</option>
-          <option value="毎日">毎日</option>
-        </select>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">飲み物の頻度</label>
-        <select
-          value={formData.drinkFrequency}
-          onChange={(e) => handleInputChange('drinkFrequency', e.target.value)}
-          className="w-full p-3 border rounded-lg"
-        >
-          <option value="">選択してください</option>
-          <option value="水・お茶のみ">水・お茶のみ</option>
-          <option value="週1-2回">週1-2回</option>
-          <option value="週3-4回">週3-4回</option>
-          <option value="毎日">毎日</option>
-        </select>
-      </div>
-    </div>
-  );
-
-  const renderStep6 = () => (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold text-center">目標・悩み</h2>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">気になる部位</label>
-        <div className="grid grid-cols-2 gap-2">
-          {['お腹', '太もも', '二の腕', '背中', '顔', 'その他'].map((area) => (
-            <button
-              key={area}
-              onClick={() => handleInputChange('concernedAreas', area)}
-              className={`p-2 border rounded-lg text-sm ${
-                formData.concernedAreas === area ? 'bg-blue-500 text-white' : 'bg-white'
-              }`}
-            >
-              {area}
-            </button>
-          ))}
-        </div>
-      </div>
+      <h2 className="text-xl font-bold text-center">目標設定</h2>
       
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">目標</label>
-        <div className="space-y-2">
-          {['体重減少', '体重増加', '筋肉増量', '現状維持', 'その他'].map((goal) => (
-            <button
-              key={goal}
-              onClick={() => handleInputChange('goalType', goal)}
-              className={`w-full p-3 border rounded-lg text-left ${
-                formData.goalType === goal ? 'bg-blue-500 text-white' : 'bg-white'
-              }`}
-            >
-              {goal}
-            </button>
-          ))}
+        <select
+          value={formData.goal}
+          onChange={(e) => handleInputChange('goal', e.target.value)}
+          className="w-full p-3 border rounded-lg"
+        >
+          <option value="">選択してください</option>
+          <option value="weight_loss">体重減少</option>
+          <option value="weight_gain">体重増加</option>
+          <option value="muscle_gain">筋肉増量</option>
+          <option value="maintenance">現状維持</option>
+        </select>
+      </div>
+      
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <h3 className="font-medium text-blue-800 mb-2">入力内容確認</h3>
+        <div className="text-sm text-blue-700 space-y-1">
+          <p>名前: {formData.name}</p>
+          <p>年齢: {formData.age}歳</p>
+          <p>性別: {formData.gender}</p>
+          <p>身長: {formData.height}cm</p>
+          <p>現在の体重: {formData.weight}kg</p>
+          <p>目標体重: {formData.targetWeight}kg</p>
+          <p>目標: {formData.goal}</p>
         </div>
       </div>
     </div>
@@ -388,9 +175,6 @@ export default function CounselingPage() {
       case 1: return renderStep1();
       case 2: return renderStep2();
       case 3: return renderStep3();
-      case 4: return renderStep4();
-      case 5: return renderStep5();
-      case 6: return renderStep6();
       default: return renderStep1();
     }
   };
@@ -405,13 +189,13 @@ export default function CounselingPage() {
         {/* 進捗バー */}
         <div className="mb-6">
           <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>Step {currentStep} / 6</span>
-            <span>{Math.round((currentStep / 6) * 100)}%</span>
+            <span>Step {currentStep} / 3</span>
+            <span>{Math.round((currentStep / 3) * 100)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
               className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / 6) * 100}%` }}
+              style={{ width: `${(currentStep / 3) * 100}%` }}
             ></div>
           </div>
         </div>
@@ -430,7 +214,7 @@ export default function CounselingPage() {
             </button>
           )}
           
-          {currentStep < 6 ? (
+          {currentStep < 3 ? (
             <button
               onClick={nextStep}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors ml-auto"
